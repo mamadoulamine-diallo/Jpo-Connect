@@ -51,3 +51,50 @@ jpo-access/
 cd frontend
 npm install
 npm run dev
+
+## Flux de données
+
+Endpoint : POST /api/admin
+
+## Requete
+
+{
+  "action": "login",
+  "email": "admin@example.com",
+  "password": "motdepasse"
+}
+## Réponse (succès)
+
+{
+  "id": 1,
+  "email": "admin@example.com",
+  "role": "Directeur"
+}
+
+#Réponse (erreur)
+
+{
+  "error": "E-mail ou mot de passe incorrect"
+}
+
+## Instructions
+
+Utilisez fetch pour appeler l’endpoint :
+
+fetch('/backend/api/admin', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ action: 'login', email: 'admin@example.com', password: 'motdepasse' })
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+    } else {
+      sessionStorage.setItem('admin', JSON.stringify(data));
+      alert('Connexion réussie !');
+    }
+  })
+  .catch(error => alert('Erreur : ' + error.message));
+
+  Stockez les données dans sessionStorage pour vérifier le rôle dans vos composants React.
