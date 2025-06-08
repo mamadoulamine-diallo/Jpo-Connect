@@ -1,0 +1,35 @@
+:root {
+    --main-font: 'Poppins', sans-serif;
+    
+    --black-color: #2E151B;
+    --bg-dark: #222222;
+    --bg-light: #ffffff;
+    --red-color: #E74A34;
+    --blue-color: #0161FF;
+    --dark-green-color: #062726;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: var(--main-font);
+    height: 100vh;
+}
+
+.goated-input-settings {
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 10px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    background-color: white;
+    transition: 0.3s ease-in-out;
+} .goated-input-settings:focus {
+    outline: none;
+    box-shadow: var(--blue-color) inset 0 -4px;
+}
