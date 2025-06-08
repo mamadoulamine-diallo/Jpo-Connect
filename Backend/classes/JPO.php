@@ -1,3 +1,4 @@
+```php
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
@@ -51,27 +52,22 @@ class Jpo
     }
 
     try {
-      // Générer un id_jpo manuellement
-      $stmt = $this->pdo->query("SELECT MAX(id_jpo) AS max_id FROM jpo");
-      $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      $id_jpo = ($row['max_id'] ?? 0) + 1;
-
       $stmt = $this->pdo->prepare(
-        "INSERT INTO jpo (id_jpo, title, date_jpo, site_fk, description, created_by) 
-             VALUES (:id_jpo, :title, :date_jpo, :site_id, :description, :created_by)"
+        "INSERT INTO jpo (title, date_jpo, site_fk, description, created_by) 
+                 VALUES (:title, :date_jpo, :site_id, :description, :created_by)"
       );
       $stmt->execute([
-        ':id_jpo' => $id_jpo,
         ':title' => $title,
         ':date_jpo' => $date_jpo,
         ':site_id' => $site_id,
         ':description' => $description ?: null,
         ':created_by' => $_SESSION['admin']['id']
       ]);
-      return ['id_jpo' => $id_jpo, 'message' => 'JPO created successfully'];
+      return ['id_jpo' => $this->pdo->lastInsertId(), 'message' => 'JPO created successfully'];
     } catch (\Exception $e) {
       http_response_code(500);
       return ['error' => 'Server error: ' . $e->getMessage()];
     }
   }
 }
+?>

@@ -1,6 +1,6 @@
-# 🎓 JPO Connect - La Plateforme_
+# 🎓 JPO Connect - La Plateforme\_
 
-Une application web permettant aux futurs étudiants de s'inscrire aux Journées Portes Ouvertes (JPO) dans tous les campus de La Plateforme_.
+Une application web permettant aux futurs étudiants de s'inscrire aux Journées Portes Ouvertes (JPO) dans tous les campus de La Plateforme\_.
 
 ## 🚀 Objectifs
 
@@ -47,7 +47,7 @@ jpo-access/
 
 ## Démarrer le frontend
 
-```bash
+````bash
 cd frontend
 npm install
 npm run dev
@@ -182,3 +182,7 @@ fetch('/backend/api/jpo.php', {
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));
+
+  ### Notes
+- The `id_jpo` column in the `jpo` table is now `AUTO_INCREMENT`, removing the need for manual ID generation.
+````
