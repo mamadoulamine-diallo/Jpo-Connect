@@ -186,3 +186,64 @@ fetch('/backend/api/jpo.php', {
   ### Notes
 - The `id_jpo` column in the `jpo` table is now `AUTO_INCREMENT`, removing the need for manual ID generation.
 ````
+### POST /backend/api/visitor.php
+
+- **Description**: Login as a visitor.
+- **Request**:
+  ```json
+  {
+    "action": "login",
+    "email": "marie@example.com",
+    "password": "visitorpass"
+  }
+
+  Response(success):
+  {
+  "id": 1,
+  "email": "marie@example.com",
+  "message": "Login successful"
+}
+
+  Response(error):
+
+  {
+  "error": "Invalid email"
+}
+
+## POST /backend/api/inscription.php
+Description: Register or unregister a visitor to/from a JPO (visitor only).
+Request (create)
+
+{
+  "action": "create",
+  "jpo_id": 1,
+  "visitor_id": 1
+}
+
+Request (delete)
+
+{
+  "action": "delete",
+  "jpo_id": 1,
+  "visitor_id": 1
+}
+
+Response (success):
+
+{
+  "id_inscription": 1,
+  "message": "Inscription successful"
+}
+
+{
+  "message": "Unregistration successful"
+}
+
+Response (error):
+
+{
+  "error": "Unauthorized"
+}
+
+## GET /backend/api/inscription.php
+Description: List all inscriptions (admin only).
