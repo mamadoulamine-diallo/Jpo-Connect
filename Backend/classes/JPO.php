@@ -1,8 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
-// Cette classe gère les JPOs (les événements)
-class JPO
+class Jpo
 {
   private $pdo;
 
@@ -12,56 +11,67 @@ class JPO
     $this->pdo = $db->getConnection();
   }
 
-  // Lister les JPOs, avec filtres par ville ou date
-  public function getAll($city = '', $date = '')
+  public function getAll()
   {
-    $query = "SELECT j.id_jpo, j.date_jpo, s.city, s.address, s.cp, s.phone 
+    session_start();
+    if (!isset($_SESSION['admin'])) {
+      http_response_code(401);
+      return ['error' => 'Unauthorized'];
+    }
+
+    $query = "SELECT j.id_jpo, j.title, j.date_jpo, j.description, j.created_at, 
+                         s.city, s.address, s.cp, s.phone, 
+                         a.first_name, a.last_name, a.email AS admin_email
                   FROM jpo j 
                   JOIN site s ON j.site_fk = s.id_site 
-                  WHERE 1=1";
-    $params = [];
-    if ($city) {
-      $query .= " AND s.city LIKE :city";
-      $params[':city'] = "%$city%";
-    }
-    if ($date) {
-      $query .= " AND j.date_jpo = :date";
-      $params[':date'] = $date;
-    }
+                  JOIN admin a ON j.created_by = a.id_admin";
     $stmt = $this->pdo->prepare($query);
-    $stmt->execute($params);
+    $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
-  // Créer une JPO (Directeur seulement)
-  public function create($site_id, $admin_id, $date_jpo)
+  public function create($title, $date_jpo, $site_id, $description)
   {
     session_start();
     if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
-      return ['error' => 'Seul un Directeur peut créer une JPO'];
+      http_response_code(403);
+      return ['error' => 'Only Directors can create JPOs'];
     }
-    // Vérifier si le site existe
+
+    if (empty($title) || empty($date_jpo) || empty($site_id)) {
+      http_response_code(400);
+      return ['error' => 'Title, date, and site are required'];
+    }
+
     $stmt = $this->pdo->prepare("SELECT id_site FROM site WHERE id_site = :site_id");
     $stmt->execute([':site_id' => $site_id]);
     if (!$stmt->fetch()) {
-      return ['error' => 'Site invalide'];
+      http_response_code(400);
+      return ['error' => 'Invalid site'];
     }
-    // Vérifier si l’admin existe
-    $stmt = $this->pdo->prepare("SELECT id_admin FROM admin WHERE id_admin = :admin_id");
-    $stmt->execute([':admin_id' => $admin_id]);
-    if (!$stmt->fetch()) {
-      return ['error' => 'Admin invalide'];
+
+    try {
+      // Générer un id_jpo manuellement
+      $stmt = $this->pdo->query("SELECT MAX(id_jpo) AS max_id FROM jpo");
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      $id_jpo = ($row['max_id'] ?? 0) + 1;
+
+      $stmt = $this->pdo->prepare(
+        "INSERT INTO jpo (id_jpo, title, date_jpo, site_fk, description, created_by) 
+             VALUES (:id_jpo, :title, :date_jpo, :site_id, :description, :created_by)"
+      );
+      $stmt->execute([
+        ':id_jpo' => $id_jpo,
+        ':title' => $title,
+        ':date_jpo' => $date_jpo,
+        ':site_id' => $site_id,
+        ':description' => $description ?: null,
+        ':created_by' => $_SESSION['admin']['id']
+      ]);
+      return ['id_jpo' => $id_jpo, 'message' => 'JPO created successfully'];
+    } catch (\Exception $e) {
+      http_response_code(500);
+      return ['error' => 'Server error: ' . $e->getMessage()];
     }
-    // Créer la JPO
-    $stmt = $this->pdo->prepare(
-      "INSERT INTO jpo (site_fk, admin_fk, date_jpo) 
-             VALUES (:site_id, :admin_id, :date_jpo)"
-    );
-    $stmt->execute([
-      ':site_id' => $site_id,
-      ':admin_id' => $admin_id,
-      ':date_jpo' => $date_jpo
-    ]);
-    return ['id' => $this->pdo->lastInsertId()];
   }
 }

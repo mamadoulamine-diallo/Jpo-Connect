@@ -98,3 +98,87 @@ fetch('/backend/api/admin', {
   .catch(error => alert('Erreur : ' + error.message));
 
   Stockez les données dans sessionStorage pour vérifier le rôle dans vos composants React.
+
+  # JPO Connect Backend
+
+## Endpoints
+
+### GET /backend/api/jpo
+
+- **Description**: List all JPOs (admin only).
+- **Response (success)** :
+  ```json
+  [
+    {
+      "id_jpo": 1,
+      "title": "JPO Lycée 2025",
+      "date_jpo": "2025-06-15",
+      "description": null,
+      "created_at": "2025-06-08 10:13:09",
+      "city": "Marseille",
+      "address": "123 Rue Exemple",
+      "cp": 13001,
+      "phone": 123456789,
+      "first_name": "Jean",
+      "last_name": "Dupont",
+      "admin_email": "admin@example.com"
+    }
+  ]
+
+  Response (error):
+
+  {
+  "error": "Unauthorized"
+ }
+
+ Exemple(fecth):
+
+ fetch('/backend/api/jpo.php', {
+  method: 'GET',
+  credentials: 'include'
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+
+  ##  POST /backend/api/jpo.php
+Description : Create a new JPO (Directors only or Pape only).
+Request:
+{
+  "action": "create",
+  "title": "JPO Collège 2025",
+  "date_jpo": "2025-08-01",
+  "site_id": 1,
+  "description": "Visite du collège."
+}
+
+Response(success):
+
+{
+  "id_jpo": 2,
+  "message": "JPO created successfully"
+}
+
+response(error):
+
+{
+  "error": "Only Directors can create JPOs"
+}
+
+Exemple(fetch):
+
+fetch('/backend/api/jpo.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json; charset=utf-8' },
+  body: JSON.stringify({
+    action: 'create',
+    title: 'JPO Collège 2025',
+    date_jpo: '2025-08-01',
+    site_id: 1,
+    description: 'Visite du collège.'
+  }),
+  credentials: 'include'
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
