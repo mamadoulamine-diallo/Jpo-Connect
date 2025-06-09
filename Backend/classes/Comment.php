@@ -101,5 +101,28 @@ class Comment
       return ['error' => 'Server error: ' . $e->getMessage()];
     }
   }
+
+  public function getPending($jpo_id = null)
+  {
+    session_start();
+    if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
+      http_response_code(403);
+      return ['error' => 'Only Directors can view pending comments'];
+    }
+
+    $query = "SELECT c.id_comments, c.comment, c.created_at, v.first_name, v.last_name, j.title AS jpo_title
+                  FROM comments c
+                  JOIN visitors v ON c.visitor_fk = v.id_visitors
+                  JOIN jpo j ON c.jpo_fk = j.id_jpo
+                  WHERE c.is_approved = 0";
+    $params = [];
+    if ($jpo_id) {
+      $query .= " AND c.jpo_fk = :jpo_id";
+      $params[':jpo_id'] = $jpo_id;
+    }
+    $stmt = $this->pdo->prepare($query);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }
 ?>

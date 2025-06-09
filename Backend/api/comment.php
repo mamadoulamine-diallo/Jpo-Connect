@@ -8,14 +8,20 @@ $comment = new Comment();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-  $jpo_id = $_GET['jpo_id'] ?? 0;
-  if ($jpo_id <= 0) {
-    http_response_code(400);
-    echo json_encode(['error' => 'JPO ID is required']);
-    exit;
+  if (isset($_GET['action']) && $_GET['action'] === 'get_pending') {
+    $jpo_id = $_GET['jpo_id'] ?? null;
+    $data = $comment->getPending($jpo_id);
+    echo json_encode($data);
+  } else {
+    $jpo_id = $_GET['jpo_id'] ?? 0;
+    if ($jpo_id <= 0) {
+      http_response_code(400);
+      echo json_encode(['error' => 'JPO ID is required']);
+      exit;
+    }
+    $data = $comment->getAll($jpo_id);
+    echo json_encode($data);
   }
-  $data = $comment->getAll($jpo_id);
-  echo json_encode($data);
 } elseif ($method === 'POST') {
   $raw_input = file_get_contents('php://input');
   $raw_input = mb_convert_encoding($raw_input, 'UTF-8', 'auto');
