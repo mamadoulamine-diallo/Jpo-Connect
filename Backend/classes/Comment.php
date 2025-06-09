@@ -124,5 +124,61 @@ class Comment
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+
+  public function createReply($comment_id, $visitor_id, $reply)
+  {
+    session_start();
+    if (!isset($_SESSION['visitor']) && !isset($_SESSION['admin'])) {
+      http_response_code(401);
+      return ['error' => 'Unauthorized'];
+    }
+
+    $user_email = isset($_SESSION['visitor']) ? $_SESSION['visitor']['email'] : $_SESSION['admin']['email'];
+    $stmt = $this->pdo->prepare("SELECT id_visitors FROM visitors WHERE id_visitors = :visitor_id AND email = :email");
+    $stmt->execute([':visitor_id' => $visitor_id, ':email' => $user_email]);
+    if (!$stmt->fetch()) {
+      http_response_code(403);
+      return ['error' => 'Cannot reply for another user'];
+    }
+
+    if (empty($reply)) {
+      http_response_code(400);
+      return ['error' => 'Reply is required'];
+    }
+
+    $stmt = $this->pdo->prepare("SELECT id_comments FROM comments WHERE id_comments = :comment_id AND is_approved = 1");
+    $stmt->execute([':comment_id' => $comment_id]);
+    if (!$stmt->fetch()) {
+      http_response_code(400);
+      return ['error' => 'Invalid or unapproved comment'];
+    }
+
+    try {
+      $stmt = $this->pdo->prepare(
+        "INSERT INTO comment_replies (comment_fk, visitor_fk, reply) 
+                 VALUES (:comment_fk, :visitor_fk, :reply)"
+      );
+      $stmt->execute([
+        ':comment_fk' => $comment_id,
+        ':visitor_fk' => $visitor_id,
+        ':reply' => $reply
+      ]);
+      return ['id_reply' => $this->pdo->lastInsertId(), 'message' => 'Reply posted successfully'];
+    } catch (\Exception $e) {
+      http_response_code(500);
+      return ['error' => 'Server error: ' . $e->getMessage()];
+    }
+  }
+
+  public function getReplies($comment_id)
+  {
+    $query = "SELECT r.id_reply, r.reply, r.created_at, v.first_name, v.last_name
+                  FROM comment_replies r
+                  JOIN visitors v ON r.visitor_fk = v.id_visitors
+                  WHERE r.comment_fk = :comment_id";
+    $stmt = $this->pdo->prepare($query);
+    $stmt->execute([':comment_id' => $comment_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }
 ?>
