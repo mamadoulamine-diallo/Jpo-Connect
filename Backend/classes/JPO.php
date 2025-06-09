@@ -12,7 +12,7 @@ class Jpo
     $this->pdo = $db->getConnection();
   }
 
-  public function getAll($city = null, $date = null)
+  public function getAll($city = null, $date = null, $start_date = null, $end_date = null, $keyword = null)
   {
     session_start();
     $isAdmin = isset($_SESSION['admin']);
@@ -37,6 +37,15 @@ class Jpo
     if ($date) {
       $conditions[] = "j.date_jpo = :date";
       $params[':date'] = $date;
+    }
+    if ($start_date && $end_date) {
+      $conditions[] = "j.date_jpo BETWEEN :start_date AND :end_date";
+      $params[':start_date'] = $start_date;
+      $params[':end_date'] = $end_date;
+    }
+    if ($keyword) {
+      $conditions[] = "(j.title LIKE :keyword OR j.description LIKE :keyword)";
+      $params[':keyword'] = '%' . $keyword . '%';
     }
     if (!empty($conditions)) {
       $query .= " WHERE " . implode(" AND ", $conditions);

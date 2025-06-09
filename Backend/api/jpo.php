@@ -11,17 +11,21 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
   $city = $_GET['city'] ?? null;
   $date = $_GET['date'] ?? null;
-  $data = $jpo->getAll($city, $date);
+  $start_date = $_GET['start_date'] ?? null;
+  $end_date = $_GET['end_date'] ?? null;
+  $keyword = $_GET['keyword'] ?? null;
+  $data = $jpo->getAll($city, $date, $start_date, $end_date, $keyword);
   echo json_encode($data);
 } elseif ($method === 'POST') {
   $raw_input = file_get_contents('php://input');
-  $raw_input = mb_convert_encoding($raw_input, 'UTF-8', 'auto');
   $input = json_decode($raw_input, true);
+
   if (is_null($input)) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid JSON: ' . json_last_error_msg()]);
     exit;
   }
+
   if (isset($input['action']) && $input['action'] === 'create') {
     $result = $jpo->create(
       $input['title'] ?? '',
