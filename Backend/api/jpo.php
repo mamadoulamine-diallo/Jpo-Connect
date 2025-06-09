@@ -1,13 +1,16 @@
+
 <?php
 require_once '../classes/Jpo.php';
 
 header('Content-Type: application/json');
 
-$jpo = new JPO();
+$jpo = new Jpo();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-  $data = $jpo->getAll();
+  $city = $_GET['city'] ?? null;
+  $date = $_GET['date'] ?? null;
+  $data = $jpo->getAll($city, $date);
   echo json_encode($data);
 } elseif ($method === 'POST') {
   $raw_input = file_get_contents('php://input');
@@ -22,8 +25,8 @@ if ($method === 'GET') {
     $result = $jpo->create(
       $input['title'] ?? '',
       $input['date_jpo'] ?? '',
-      $input['site_id'] ?? '',
-      $input['description'] ?? '',
+      $input['site_id'] ?? 0,
+      $input['description'] ?? null
     );
     echo json_encode($result);
   } else {
@@ -34,3 +37,4 @@ if ($method === 'GET') {
   http_response_code(405);
   echo json_encode(['error' => 'Method not allowed']);
 }
+?>

@@ -1,4 +1,4 @@
-```php
+
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
@@ -12,22 +12,38 @@ class Jpo
     $this->pdo = $db->getConnection();
   }
 
-  public function getAll()
+  public function getAll($city = null, $date = null)
   {
     session_start();
-    if (!isset($_SESSION['admin'])) {
-      http_response_code(401);
-      return ['error' => 'Unauthorized'];
-    }
+    $isAdmin = isset($_SESSION['admin']);
 
     $query = "SELECT j.id_jpo, j.title, j.date_jpo, j.description, j.created_at, 
-                         s.city, s.address, s.cp, s.phone, 
-                         a.first_name, a.last_name, a.email AS admin_email
-                  FROM jpo j 
-                  JOIN site s ON j.site_fk = s.id_site 
-                  JOIN admin a ON j.created_by = a.id_admin";
+                         s.city, s.address, s.cp, s.phone";
+    if ($isAdmin) {
+      $query .= ", a.first_name, a.last_name, a.email AS admin_email";
+    }
+    $query .= " FROM jpo j 
+                    JOIN site s ON j.site_fk = s.id_site";
+    if ($isAdmin) {
+      $query .= " JOIN admin a ON j.created_by = a.id_admin";
+    }
+
+    $params = [];
+    $conditions = [];
+    if ($city) {
+      $conditions[] = "s.city = :city";
+      $params[':city'] = $city;
+    }
+    if ($date) {
+      $conditions[] = "j.date_jpo = :date";
+      $params[':date'] = $date;
+    }
+    if (!empty($conditions)) {
+      $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+
     $stmt = $this->pdo->prepare($query);
-    $stmt->execute();
+    $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
