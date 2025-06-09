@@ -3,6 +3,7 @@
 require_once '../classes/Jpo.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $jpo = new Jpo();
 $method = $_SERVER['REQUEST_METHOD'];
