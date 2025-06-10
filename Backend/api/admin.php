@@ -1,3 +1,4 @@
+
 <?php
 require_once '../classes/Admin.php';
 
@@ -11,6 +12,9 @@ if ($method === 'POST') {
   if (isset($data['action']) && $data['action'] === 'login') {
     $result = $admin->login($data['email'], $data['password']);
     if ($result) {
+      if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+      }
       echo json_encode($result);
     } else {
       http_response_code(401);
@@ -24,3 +28,4 @@ if ($method === 'POST') {
   http_response_code(405);
   echo json_encode(['error' => 'Méthode non autorisée']);
 }
+?>
