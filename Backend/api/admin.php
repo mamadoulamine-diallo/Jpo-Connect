@@ -1,5 +1,8 @@
 
 <?php
+// Masquer les warnings en production
+error_reporting(E_ALL & ~E_WARNING);
+
 require_once '../classes/Admin.php';
 
 header('Content-Type: application/json; charset=utf-8');

@@ -13,10 +13,13 @@ class Admin
 
   public function login($email, $password)
   {
-    $stmt = $this->pdo->prepare("SELECT id_admin, email, role, permissions FROM admin WHERE email = :email");
+    $stmt = $this->pdo->prepare("SELECT id_admin, email, role, permissions, password FROM admin WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($admin && password_verify($password, $admin['password'])) {
+    if ($admin && password_verify($password, $admin['password'] ?? '')) {
+      if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+      }
       $_SESSION['admin'] = [
         'id' => $admin['id_admin'],
         'email' => $admin['email'],
@@ -33,7 +36,7 @@ class Admin
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    if (!isset($_SESSION['admin']) || !$_SESSION['admin']['permissions']['role_manage']) {
+    if (!isset($_SESSION['admin']) || !($_SESSION['admin']['permissions']['role_manage'] ?? false)) {
       http_response_code(403);
       return ['error' => 'Accès réservé aux Directeurs'];
     }
@@ -64,7 +67,7 @@ class Admin
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    if (!isset($_SESSION['admin']) || !$_SESSION['admin']['permissions']['role_manage']) {
+    if (!isset($_SESSION['admin']) || !($_SESSION['admin']['permissions']['role_manage'] ?? false)) {
       http_response_code(403);
       return ['error' => 'Accès réservé aux Directeurs'];
     }
