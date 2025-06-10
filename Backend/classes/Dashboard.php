@@ -1,4 +1,3 @@
-
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
@@ -13,7 +12,6 @@ class Dashboard
 
   public function getData()
   {
-    // Vérifier la session une seule fois
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
@@ -24,7 +22,6 @@ class Dashboard
 
     $admin_id = $_SESSION['admin']['id'];
 
-    // Liste des JPOs avec inscrits
     $stmt = $this->pdo->prepare(
       "SELECT j.id_jpo, j.title, j.date_jpo, j.description, s.city,
                     COUNT(i.id_inscription) AS inscrits
@@ -37,7 +34,6 @@ class Dashboard
     $stmt->execute([':admin_id' => $admin_id]);
     $jpos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Stats globales
     $stmt = $this->pdo->prepare(
       "SELECT COUNT(DISTINCT j.id_jpo) AS total_jpos,
                     COUNT(i.id_inscription) AS total_inscrits
@@ -79,6 +75,61 @@ class Dashboard
       $stmt = $this->pdo->prepare("DELETE FROM jpo WHERE id_jpo = :jpo_id");
       $stmt->execute([':jpo_id' => $jpo_id]);
       return ['message' => 'JPO supprimée avec succès'];
+    } catch (\Exception $e) {
+      http_response_code(500);
+      return ['error' => 'Erreur serveur : ' . $e->getMessage()];
+    }
+  }
+
+  public function updateJpo($jpo_id, $title, $date_jpo, $site_id, $description)
+  {
+    if (session_status() === PHP_SESSION_NONE) {
+      session_start();
+    }
+    if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
+      http_response_code(403);
+      return ['error' => 'Accès réservé aux Directeurs'];
+    }
+
+    $admin_id = $_SESSION['admin']['id'];
+
+    // Vérifier que la JPO existe et appartient à l’admin
+    $stmt = $this->pdo->prepare(
+      "SELECT id_jpo FROM jpo WHERE id_jpo = :jpo_id AND created_by = :admin_id"
+    );
+    $stmt->execute([':jpo_id' => $jpo_id, ':admin_id' => $admin_id]);
+    if (!$stmt->fetch()) {
+      http_response_code(404);
+      return ['error' => 'JPO introuvable ou non autorisée'];
+    }
+
+    // Vérifier que le site existe
+    $stmt = $this->pdo->prepare("SELECT id_site FROM site WHERE id_site = :site_id");
+    $stmt->execute([':site_id' => $site_id]);
+    if (!$stmt->fetch()) {
+      http_response_code(400);
+      return ['error' => 'Site invalide'];
+    }
+
+    if (empty($title) || empty($date_jpo)) {
+      http_response_code(400);
+      return ['error' => 'Titre et date sont requis'];
+    }
+
+    try {
+      $stmt = $this->pdo->prepare(
+        "UPDATE jpo 
+                 SET title = :title, date_jpo = :date_jpo, site_fk = :site_id, description = :description
+                 WHERE id_jpo = :jpo_id"
+      );
+      $stmt->execute([
+        ':jpo_id' => $jpo_id,
+        ':title' => $title,
+        ':date_jpo' => $date_jpo,
+        ':site_id' => $site_id,
+        ':description' => $description ?: null
+      ]);
+      return ['message' => 'JPO mise à jour avec succès'];
     } catch (\Exception $e) {
       http_response_code(500);
       return ['error' => 'Erreur serveur : ' . $e->getMessage()];
