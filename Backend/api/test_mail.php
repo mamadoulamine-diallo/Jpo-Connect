@@ -9,6 +9,9 @@ echo str_repeat("=", 40) . "\n";
 
 $mail = new PHPMailer(true);
 
+
+
+
 try {
     // Configuration SMTP
     $mail->isSMTP();
@@ -21,8 +24,7 @@ try {
 
     // Destinataires
     $mail->setFrom('liveyupengsebastien@gmail.com', 'JPO Connect');
-    $mail->addAddress('liveyupengsebastien@gmail.com', 'Test JPO'); 
-
+    $mail->addAddress($visitor['email'], $visitor['first_name'] . ' ' . $visitor['last_name']);
     // Contenu
     $mail->isHTML(true);
     $mail->Subject = 'Test JPO Connect - ' . date('H:i:s');
