@@ -16,9 +16,9 @@ class Dashboard
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
+    if (!isset($_SESSION['admin']) || !($_SESSION['admin']['permissions']['stats_view'] ?? false)) {
       http_response_code(403);
-      return ['error' => 'Accès réservé aux Directeurs'];
+      return ['error' => 'Accès non autorisé'];
     }
 
     $admin_id = $_SESSION['admin']['id'];
@@ -56,9 +56,9 @@ class Dashboard
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
+    if (!isset($_SESSION['admin']) || !($_SESSION['admin']['permissions']['jpo_delete'] ?? false)) {
       http_response_code(403);
-      return ['error' => 'Accès réservé aux Directeurs'];
+      return ['error' => 'Accès non autorisé'];
     }
 
     $admin_id = $_SESSION['admin']['id'];
@@ -87,9 +87,9 @@ class Dashboard
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    if (!isset($_SESSION['admin']) || $_SESSION['admin']['role'] !== 'Directeur') {
+    if (!isset($_SESSION['admin']) || !($_SESSION['admin']['permissions']['jpo_edit'] ?? false)) {
       http_response_code(403);
-      return ['error' => 'Accès réservé aux Directeurs'];
+      return ['error' => 'Accès non autorisé'];
     }
 
     $admin_id = $_SESSION['admin']['id'];
