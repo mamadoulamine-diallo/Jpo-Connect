@@ -1,6 +1,7 @@
 
 <?php
-require_once '../classes/Dashboard.php';
+
+require_once __DIR__ . '/../classes/Dashboard.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -28,7 +29,8 @@ if ($method === 'GET') {
       $input['title'] ?? '',
       $input['date_jpo'] ?? '',
       $input['site_id'] ?? 0,
-      $input['description'] ?? null
+      $input['description'] ?? null,
+      $input['capacity'] ?? null
     );
     echo json_encode($result);
   } else {

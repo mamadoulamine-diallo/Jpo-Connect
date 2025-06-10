@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
@@ -23,7 +24,7 @@ class Dashboard
     $admin_id = $_SESSION['admin']['id'];
 
     $stmt = $this->pdo->prepare(
-      "SELECT j.id_jpo, j.title, j.date_jpo, j.description, s.city,
+      "SELECT j.id_jpo, j.title, j.date_jpo, j.description, s.city, j.capacity,
                     COUNT(i.id_inscription) AS inscrits
              FROM jpo j
              JOIN site s ON j.site_fk = s.id_site
@@ -81,7 +82,7 @@ class Dashboard
     }
   }
 
-  public function updateJpo($jpo_id, $title, $date_jpo, $site_id, $description)
+  public function updateJpo($jpo_id, $title, $date_jpo, $site_id, $description, $capacity)
   {
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
@@ -93,7 +94,6 @@ class Dashboard
 
     $admin_id = $_SESSION['admin']['id'];
 
-    // Vérifier que la JPO existe et appartient à l’admin
     $stmt = $this->pdo->prepare(
       "SELECT id_jpo FROM jpo WHERE id_jpo = :jpo_id AND created_by = :admin_id"
     );
@@ -103,7 +103,6 @@ class Dashboard
       return ['error' => 'JPO introuvable ou non autorisée'];
     }
 
-    // Vérifier que le site existe
     $stmt = $this->pdo->prepare("SELECT id_site FROM site WHERE id_site = :site_id");
     $stmt->execute([':site_id' => $site_id]);
     if (!$stmt->fetch()) {
@@ -115,11 +114,16 @@ class Dashboard
       http_response_code(400);
       return ['error' => 'Titre et date sont requis'];
     }
+    if (!is_null($capacity) && (!is_numeric($capacity) || $capacity < 0)) {
+      http_response_code(400);
+      return ['error' => 'Capacité invalide'];
+    }
 
     try {
       $stmt = $this->pdo->prepare(
         "UPDATE jpo 
-                 SET title = :title, date_jpo = :date_jpo, site_fk = :site_id, description = :description
+                 SET title = :title, date_jpo = :date_jpo, site_fk = :site_id, 
+                     description = :description, capacity = :capacity
                  WHERE id_jpo = :jpo_id"
       );
       $stmt->execute([
@@ -127,7 +131,8 @@ class Dashboard
         ':title' => $title,
         ':date_jpo' => $date_jpo,
         ':site_id' => $site_id,
-        ':description' => $description ?: null
+        ':description' => $description ?: null,
+        ':capacity' => $capacity ?: null
       ]);
       return ['message' => 'JPO mise à jour avec succès'];
     } catch (\Exception $e) {
