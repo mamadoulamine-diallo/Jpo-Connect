@@ -52,6 +52,7 @@ class Visitor
     LEFT JOIN site s ON j.site_fk = s.id_site 
     WHERE j.id_jpo = :jpo_id
 ");
+
                 $stmt->execute([':jpo_id' => $jpo_id]);
                 $jpoDetails = $stmt->fetch(PDO::FETCH_ASSOC);
 
