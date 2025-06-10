@@ -19,7 +19,6 @@
 body {
     background-color: var(--bg-light);
     font-family: var(--main-font);
-    height: 100vh;
 }
 
 .goated-input-settings {
