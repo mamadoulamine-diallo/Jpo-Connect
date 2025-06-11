@@ -122,40 +122,7 @@ class Visitor
     }
 
     
-    public function login($email, $password = null)
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT id_visitors, first_name, last_name, email FROM visitors WHERE email = :email");
-            $stmt->execute([':email' => $email]);
-            $visitor = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$visitor) {
-                http_response_code(401);
-                return ['error' => 'Invalid email'];
-            }
-
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
-            $_SESSION['visitor'] = [
-                'id' => $visitor['id_visitors'],
-                'email' => $visitor['email'],
-                'first_name' => $visitor['first_name'],
-                'last_name' => $visitor['last_name']
-            ];
-
-            return [
-                'success' => true,
-                'visitor_id' => $visitor['id_visitors'],
-                'message' => 'Login successful'
-            ];
-
-        } catch (\PDOException $e) {
-            http_response_code(500);
-            return ['error' => 'Database error: ' . $e->getMessage()];
-        }
-    }
+  
     public function getInscriptions($visitor_id)
     {
         try {
@@ -173,31 +140,6 @@ class Visitor
         }
     }
 
-    public function cancelInscription($visitor_id, $jpo_id)
-    {
-        try {
-            $this->pdo->beginTransaction();
-
-            $stmt = $this->pdo->prepare(
-                "DELETE FROM inscriptions 
-                 WHERE visitor_fk = :visitor_id AND jpo_fk = :jpo_id"
-            );
-            $success = $stmt->execute([
-                ':visitor_id' => $visitor_id,
-                ':jpo_id' => $jpo_id
-            ]);
-
-            $this->pdo->commit();
-
-            return [
-                'success' => $success,
-                'message' => $success ? 'Inscription cancelled successfully' : 'No inscription found'
-            ];
-        } catch (\PDOException $e) {
-            $this->pdo->rollBack();
-            http_response_code(500);
-            return ['error' => 'Database error: ' . $e->getMessage()];
-        }
-    }
+  
 }
 ?>
