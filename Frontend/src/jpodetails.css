@@ -1,0 +1,242 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    
+}
+
+/* Header bleu */
+.hero-header {
+    background-color: #0161FF;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.hero-header h1 {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 0 20px;
+}
+
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+
+.content-section {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 60px;
+    align-items: flex-start;
+}
+
+
+.image-section {
+    flex: 1;
+    max-width: 400px;
+}
+
+.event-image {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    object-fit: cover;
+    border: 2px solid #0161FF;
+    border-radius: 4px;
+}
+
+/* Informations de l'événement */
+.event-info {
+    flex: 1;
+    max-width: 300px;
+    padding: 0 20px;
+    color: #333;
+}
+
+.event-info h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.info-item .icon {
+    width: 17px;
+    height: 17px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.info-item strong {
+    font-weight: 600;
+}
+
+/* Section formulaire */
+.form-section {
+    flex: 1;
+    max-width: 350px;
+}
+
+.form-container {
+    border: 1px solid #ddd;
+    padding: 30px 25px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Formulaire */
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 0;
+    font-size: 0.95rem;
+    background: transparent;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-bottom-color: #0161FF;
+}
+
+.submit-btn {
+    background-color: #E74A34;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    margin-top: 20px;
+    min-width: 120px;
+}
+
+.submit-btn:hover {
+    background-color: #d63d28;
+}
+
+/* Section description */
+.description-section {
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.description-section h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.description-content {
+    color: #666;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    max-width: 800px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .content-section {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+    }
+    
+    .image-section,
+    .event-info,
+    .form-section {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .main-container {
+        padding: 30px 15px;
+    }
+    
+    .description-section {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-header {
+        height: 100px;
+    }
+    
+    .hero-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .main-container {
+        padding: 20px 10px;
+    }
+    
+    .form-container {
+        padding: 20px 15px;
+    }
+    
+    .content-section {
+        gap: 20px;
+    }
+}
