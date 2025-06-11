@@ -155,17 +155,6 @@ class Visitor
             return ['error' => 'Database error: ' . $e->getMessage()];
         }
     }
-
-    public function logout()
-    {
-        if (isset($_SESSION['visitor'])) {
-            unset($_SESSION['visitor']);
-            session_destroy();
-            return ['success' => true, 'message' => 'Logged out successfully'];
-        }
-        return ['success' => false, 'message' => 'No active session'];
-    }
-
     public function getInscriptions($visitor_id)
     {
         try {

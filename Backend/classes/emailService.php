@@ -40,6 +40,7 @@ class EmailService {
         }
     }
 
+    //creer le template de l'email avec du html et css
 private function getEmailTemplate($visitorName, $jpoDetails) {
     $date = new DateTime($jpoDetails['date_jpo']);
     return "
@@ -50,16 +51,16 @@ private function getEmailTemplate($visitorName, $jpoDetails) {
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
             <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'>
         </head>
-        <body style='margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;'>
-            <div style='max-width: 600px; margin: 20px auto; background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
+        <body style='margin: 0; padding: 0; font-family: Arial, sans-serif; background-color:rgb(180, 180, 180);'>
+            <div style='max-width: 600px; margin: 20px auto; background-color: white; padding: 30px;  box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
                 <!-- Header -->
                
 
                 <!-- Content -->
                 <div style='padding: 0 15px;'>
-                    <h1 style='color: #0161FF; margin-bottom: 25px; font-size: 24px; text-align: center;'>
-                        <i class='fas fa-check-circle' style='color: #4CAF50; margin-right: 10px;'></i>
-                        Confirmation d'inscription
+                    <h1 style='color:rgb(31, 84, 168); margin-bottom: 25px; font-size: 24px; text-align: center;'>
+                        
+                        Confirmation d'inscription à la Journée Portes Ouvertes
                     </h1>
                     
                     <p style='color: #333; font-size: 16px; margin-bottom: 25px;'>
@@ -75,7 +76,7 @@ private function getEmailTemplate($visitorName, $jpoDetails) {
                               border-left: 4px solid #0161FF; 
                               padding: 20px; 
                               margin: 25px 0; 
-                              border-radius: 8px;'>
+                              '>
                         <h3 style='color: #0161FF; margin-top: 0; font-size: 18px;'>
                             <i class='fas fa-info-circle' style='margin-right: 10px;'></i>
                             Détails de l'événement
