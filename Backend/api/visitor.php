@@ -1,33 +1,36 @@
-
+```php
 <?php
 require_once '../classes/Visitor.php';
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 $visitor = new Visitor();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'POST') {
-  $raw_input = file_get_contents('php://input');
-  $raw_input = mb_convert_encoding($raw_input, 'UTF-8', 'auto');
-  $input = json_decode($raw_input, true);
+  $input = json_decode(file_get_contents('php://input'), true);
   if (is_null($input)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid JSON: ' . json_last_error_msg()]);
+    echo json_encode(['error' => 'JSON invalide']);
     exit;
   }
   if (isset($input['action']) && $input['action'] === 'login') {
-    $result = $visitor->login(
-      $input['email'] ?? '',
-      $input['password'] ?? null
-    );
-    echo json_encode($result);
+    $result = $visitor->login($input['email'] ?? '');
+    if ($result) {
+      if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+      }
+      echo json_encode($result);
+    } else {
+      http_response_code(401);
+      echo json_encode(['error' => 'Email invalide']);
+    }
   } else {
     http_response_code(400);
-    echo json_encode(['error' => 'Action not specified']);
+    echo json_encode(['error' => 'Action non spécifiée']);
   }
 } else {
   http_response_code(405);
-  echo json_encode(['error' => 'Method not allowed']);
+  echo json_encode(['error' => 'Méthode non autorisée']);
 }
 ?>
