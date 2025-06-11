@@ -121,6 +121,7 @@ class Visitor
         }
     }
 
+    
     public function login($email, $password = null)
     {
         try {
