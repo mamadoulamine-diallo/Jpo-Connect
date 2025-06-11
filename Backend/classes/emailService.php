@@ -55,7 +55,6 @@ private function getEmailTemplate($visitorName, $jpoDetails) {
             <div style='max-width: 600px; margin: 20px auto; background-color: white; padding: 30px;  box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
                 <!-- Header -->
                
-
                 <!-- Content -->
                 <div style='padding: 0 15px;'>
                     <h1 style='color:rgb(31, 84, 168); margin-bottom: 25px; font-size: 24px; text-align: center;'>
