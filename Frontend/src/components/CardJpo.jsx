@@ -11,7 +11,7 @@ function CardJpo({ jpo }) {
         <div key={jpo.id} id="cardJpo" className="bg-white text-black rounded-md">
             <p id="pCity">{jpo.city}</p>
             <p>{formatDate(jpo.date_jpo)}</p>
-            <Link to={`/jpo/${jpo.id}`}>
+            <Link to={`/jpo/${jpo.id_jpo}`}>
                 <button className="text-white rounded-md cursor-pointer transition-colors duration-300">
                     Voir les détails
                 </button>

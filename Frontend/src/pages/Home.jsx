@@ -21,12 +21,11 @@ const Home = () => {
 
     // Grouper par ville et prendre les 6 plus proches pour chaque ville
     const jposByCity = {};
-    sortedJpos.forEach(jpo => {
-        if (!jposByCity[jpo.city]) jposByCity[jpo.city] = [];
-        if (jposByCity[jpo.city].length < 6) {
-            jposByCity[jpo.city].push(jpo);
+        sortedJpos.forEach(jpo => {
+        if (!jposByCity[jpo.city]) {
+            jposByCity[jpo.city] = [jpo]; // Ajoute seulement la première JPO trouvée pour chaque ville
         }
-    });
+});
 
     // Liste des villes pour les onglets
     const cities = Object.keys(jposByCity);
