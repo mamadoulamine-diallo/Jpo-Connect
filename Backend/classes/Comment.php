@@ -1,4 +1,4 @@
-```php
+
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
@@ -74,13 +74,13 @@ class Comment
 
     try {
       $stmt = $this->pdo->prepare(
-        "INSERT INTO comment_replies (comment_fk, admin_fk, content) 
-                 VALUES (:comment_id, :admin_id, :content)"
+        "INSERT INTO comment_replies (comment_fk, visitor_fk, admin_fk, reply) 
+                 VALUES (:comment_id, NULL, :admin_fk, :reply)"
       );
       $stmt->execute([
         ':comment_id' => $comment_id,
-        ':admin_id' => $_SESSION['admin']['id'],
-        ':content' => $content
+        ':admin_fk' => $_SESSION['admin']['id'],
+        ':reply' => $content
       ]);
       return ['message' => 'Réponse ajoutée avec succès'];
     } catch (\Exception $e) {

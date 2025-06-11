@@ -20,8 +20,6 @@ if ($method === 'POST') {
       if (session_status() === PHP_SESSION_NONE) {
         session_start();
       }
-      // Débogage : enregistrer la session visiteur
-      file_put_contents(__DIR__ . '/debug_visitor_session.txt', print_r($_SESSION['visitor'], true));
       echo json_encode($result);
     } else {
       http_response_code(401);
