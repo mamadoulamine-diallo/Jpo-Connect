@@ -1,0 +1,2 @@
+string(5) "guest"
+{"error":"Permission refus\u00e9e"}

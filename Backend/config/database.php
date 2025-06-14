@@ -1,29 +1,29 @@
 <?php
-
 class Database
 {
-    private $pdo;
+    private $host = "localhost"; // Adresse du serveur (ici, local)
+    private $dbname = "jpo_platform"; // Nom de la base de données
+    private $username = "root"; // Nom d'utilisateur (à changer selon ton serveur)
+    private $password = "root"; // Mot de passe (à changer selon ton serveur)
+    private $conn = null;
 
-    public function __construct()
-    {
-        $host = 'localhost';
-        $dbname = 'jpo_connect';
-        $username = 'root';
-        $password = 'root';
-
-        try {
-            $this->pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            // En cas d’erreur, on renvoie un message clair
-            http_response_code(500);
-            echo json_encode(['error' => 'Erreur de connexion à la base : ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
+    // Fonction pour se connecter à la base de données
     public function getConnection()
     {
-        return $this->pdo;
+        try {
+            // On essaie de se connecter avec PDO
+            $this->conn = new PDO(
+                "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=utf8",
+                $this->username,
+                $this->password
+            );
+            // On configure PDO pour qu'il affiche les erreurs
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $this->conn;
+        } catch (PDOException $e) {
+            // Si ça ne marche pas, on affiche une erreur
+            echo "Erreur de connexion : " . $e->getMessage();
+            return null;
+        }
     }
 }

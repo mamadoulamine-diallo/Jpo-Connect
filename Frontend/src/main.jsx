@@ -1,16 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { HelmetProvider } from 'react-helmet-async'
-import './root.css'
-import './tailwind.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import AppRouter from './AppRouter.jsx'
 import './index.css'
 
-import AppRouter from './AppRouter.jsx'
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <HelmetProvider>
-      <AppRouter />
-    </HelmetProvider>
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <AppRouter />
+  </React.StrictMode>,
 )

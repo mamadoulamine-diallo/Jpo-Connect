@@ -1,45 +1,68 @@
-
 <?php
-require_once '../classes/Jpo.php';
-
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400');
 
-$jpo = new Jpo();
-$method = $_SERVER['REQUEST_METHOD'];
-
-if ($method === 'GET') {
-  $city = $_GET['city'] ?? null;
-  $date = $_GET['date'] ?? null;
-  $start_date = $_GET['start_date'] ?? null;
-  $end_date = $_GET['end_date'] ?? null;
-  $keyword = $_GET['keyword'] ?? null;
-  $data = $jpo->getAll($city, $date, $start_date, $end_date, $keyword);
-  echo json_encode($data);
-} elseif ($method === 'POST') {
-  $raw_input = file_get_contents('php://input');
-  $input = json_decode($raw_input, true);
-
-  if (is_null($input)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid JSON: ' . json_last_error_msg()]);
-    exit;
-  }
-
-  if (isset($input['action']) && $input['action'] === 'create') {
-    $result = $jpo->create(
-      $input['title'] ?? '',
-      $input['date_jpo'] ?? '',
-      $input['site_id'] ?? 0,
-      $input['description'] ?? null
-    );
-    echo json_encode($result);
-  } else {
-    http_response_code(400);
-    echo json_encode(['error' => 'Action not specified']);
-  }
-} else {
-  http_response_code(405);
-  echo json_encode(['error' => 'Method not allowed']);
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  exit(0);
 }
-?>
+
+session_start();
+
+require_once __DIR__ . '/../class/JPO.php';
+
+$jpo = new JPO();
+$method = $_SERVER['REQUEST_METHOD'];
+$user_role = $_SESSION['role'] ?? 'guest';
+$response = ['success' => false];
+
+try {
+  switch ($method) {
+    case 'GET':
+      $data = json_decode(file_get_contents('php://input'), true);
+      $result = $jpo->getAll(); // Utilise getAll au lieu de get
+      $response = is_array($result) ? ['success' => true, 'data' => $result] : ['success' => false, 'error' => $result['error'] ?? 'Échec de la récupération'];
+      break;
+
+    case 'POST':
+      $data = json_decode(file_get_contents('php://input'), true);
+      if ($data && isset($data['title']) && isset($data['date']) && isset($data['location']) && isset($data['capacity']) && isset($data['description'])) {
+        $result = $jpo->add($data['title'], $data['date'], $data['location'], $data['capacity'], $data['description'], $user_role);
+        $response = is_array($result) ? $result : ['success' => false, 'error' => 'Réponse inattendue'];
+      } else {
+        $response = ['success' => false, 'error' => 'Données invalides'];
+      }
+      break;
+
+    case 'PUT':
+      $data = json_decode(file_get_contents('php://input'), true);
+      if ($data && isset($data['id']) && isset($data['title']) && isset($data['date']) && isset($data['location']) && isset($data['capacity']) && isset($data['description'])) {
+        $result = $jpo->update($data['id'], $data['title'], $data['date'], $data['location'], $data['capacity'], $data['description'], $user_role);
+        $response = is_array($result) ? $result : ['success' => false, 'error' => 'Réponse inattendue'];
+      } else {
+        $response = ['success' => false, 'error' => 'Données invalides'];
+      }
+      break;
+
+    case 'DELETE':
+      $data = json_decode(file_get_contents('php://input'), true);
+      if ($data && isset($data['id'])) {
+        $result = $jpo->delete($data['id'], $user_role);
+        $response = is_array($result) ? $result : ['success' => false, 'error' => 'Réponse inattendue'];
+      } else {
+        $response = ['success' => false, 'error' => 'Données invalides'];
+      }
+      break;
+
+    default:
+      $response = ['success' => false, 'error' => 'Méthode non supportée'];
+      break;
+  }
+} catch (Exception $e) {
+  $response = ['success' => false, 'error' => 'Erreur serveur: ' . $e->getMessage()];
+}
+
+echo json_encode($response);

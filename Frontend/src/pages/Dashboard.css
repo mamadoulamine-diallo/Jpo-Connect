@@ -1,0 +1,123 @@
+.dashboard {
+  padding: 20px;
+}
+
+.dashboard h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 10px;
+  border: none;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-content h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.tab-content input,
+.tab-content textarea,
+.tab-content select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.tab-content textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.jpo-list {
+  margin-top: 15px;
+}
+
+.jpo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.jpo-item button.edit {
+  background-color: #ffc107;
+  margin-right: 10px;
+}
+
+.jpo-item button.edit:hover {
+  background-color: #e0a800;
+}
+
+.jpo-item button.delete {
+  background-color: #dc3545;
+}
+
+.jpo-item button.delete:hover {
+  background-color: #c82333;
+}
+
+.inscription-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.stats {
+  margin-top: 15px;
+}
+
+.comment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.comment-status {
+  font-size: 14px;
+  color: #666;
+}
+
+.comment-item button.approve {
+  background-color: #28a745;
+  margin-right: 10px;
+}
+
+.comment-item button.approve:hover {
+  background-color: #218838;
+}
+
+.comment-item button.delete {
+  background-color: #dc3545;
+}
+
+.comment-item button.delete:hover {
+  background-color: #c82333;
+}
+
+.content-section {
+  margin-bottom: 20px;
+}
+
+.content-section h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
